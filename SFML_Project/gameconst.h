@@ -10,4 +10,6 @@
 
 #define METER 75.0f //meter definition in pixels
 
+#define PLAYER_ANIMATION_COUNT 9u
+
 #define PLATFORM_H 50.0f

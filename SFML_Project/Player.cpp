@@ -1,20 +1,25 @@
 #include "Player.h"
 
-Player::Player(sf::Texture* texture) : GameObject(texture), m_jump_timer(0.0f), m_jumping(true), m_jump_acc(0.0f), score(0.0f)
+Player::Player(sf::Texture* texture) : GameObject(texture), m_jump_timer(0.0f), m_jumping(true), m_jump_acc(0.0f), score(0.0f), m_animation(texture,sf::Vector2u(1u,PLAYER_ANIMATION_COUNT), 1.0f), current_animation(ANIMATION::IDLE)
 {
+	setTextureRect(m_animation.uvRect);
+	setOrigin(getSize() * 0.5f);
 }
 
 Player::~Player()
 {
 }
-#include <iostream>
+
 void Player::update(const sf::Time& dt)
 {
-	//std::cout << m_acc.x << " " << m_acc.y << ", " << m_vel.x << " " << m_vel.y << " jumping->" << m_jumping << ", time->"<<m_jump_timer<< "\n";
-
+	updateAnimation();
+	m_animation.update(current_animation, dt.asSeconds());
+	setTextureRect(m_animation.uvRect);
 	updateJumping(dt);
 	updateMovement(dt);
 }
+
+
 
 void Player::updateJumping(const sf::Time& dt)
 {
@@ -62,6 +67,70 @@ void Player::setAcc(const float& x, const float& y)
 
 	m_acc.x = x * METER;
 	m_acc.y = y * METER;
+}
+#include <iostream>
+void Player::updateAnimation()
+{
+	if (m_vel.y<0.0f)
+	{
+		if (m_vel.x > 0.0f)
+		{
+			current_animation = ANIMATION::JUMPING_RIGHT;
+		}
+
+		else if (m_vel.x < 0.0f)
+		{
+			current_animation = ANIMATION::JUMPING_LEFT;
+		}
+
+		else if (m_vel.x == 0.0f)
+		{
+			current_animation = ANIMATION::JUMPING;
+		}
+
+		return;
+	}
+
+	if (m_vel.y > 0.0f)
+	{
+		if (m_vel.x > 0.0f)
+		{
+			current_animation = ANIMATION::FALLING_RIGHT;
+		}
+
+		else if (m_vel.x < 0.0f)
+		{
+			current_animation = ANIMATION::FALLING_LEFT;
+		}
+
+		else if (m_vel.x == 0.0f)
+		{
+			current_animation = ANIMATION::FALLING;
+		}
+
+		return;
+	}
+
+	if (m_vel.y == 0.0f)
+	{
+		if (m_vel.x > 0.0f)
+		{
+			current_animation = ANIMATION::WALKING_RIGHT;
+		}
+
+		else if (m_vel.x < 0.0f)
+		{
+			current_animation = ANIMATION::WALKING_LEFT;
+		}
+
+		else if (m_vel.x == 0.0f)
+		{
+			current_animation = ANIMATION::IDLE;
+		}
+
+		return;
+	}
+
 }
 
 void Player::addAcc(const float& x, const float& y, const sf::Time& dt)

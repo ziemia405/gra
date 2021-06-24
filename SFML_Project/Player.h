@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Animation.h"
 #include <cmath>
 class Player :
     public GameObject
@@ -10,16 +11,18 @@ private:
     float m_jump_acc;
     float m_jump_timer;
     bool m_jumping;
+    Animation m_animation;
 
 public:
     float score;
-
+    ANIMATION current_animation;
     Player(sf::Texture* texture);
     virtual ~Player();
 
     virtual void update(const sf::Time& dt) override;
     void updateJumping(const sf::Time& dt);
     void updateMovement(const sf::Time& dt);
+    void updateAnimation();
     void setAcc(const float& x, const float& y); // values in meters
     void addAcc(const float& x, const float& y, const sf::Time& dt); // values in meters/sec
     sf::Vector2f getAcc() const;
